@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const initData = require("./data.js");
-const Listing = require("../models/listing.js"); // Ensure the path is correct
+const Listing = require("../models/listing.js"); 
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -17,13 +17,18 @@ async function main() {
 }
 
 const initDB = async () => {
-  
-  console.log("Type of Listing:", typeof Listing); // should be 'function'
-  console.log("Listing.deleteMany:", Listing.deleteMany); // should be a function
-
-  // Now try using it
   await Listing.deleteMany({});
-  initData.data = initData.data.map((obj) => ({...obj, owner:"688a508bfaffba506d390873",}));
+  
+  // Har listing mein owner ID aur default coordinates (Delhi) add kar rahe hain
+  initData.data = initData.data.map((obj) => ({
+    ...obj, 
+    owner: "688a508bfaffba506d390873",
+    geometry: {
+      type: "Point",
+      coordinates: [77.209, 28.613] // Ye line Mapbox error theek karegi
+    }
+  }));
+
   await Listing.insertMany(initData.data);
   console.log("data was initialized");
 };
